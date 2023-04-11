@@ -1,0 +1,13 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+
+@import "@rhythm-ui/react/lib/core.css";
+@import "@rhythm-ui/react/lib/themes/default.css";
+
+/* NOTE: It is recommend that for custom styles, you create a file called called style.css
+& write your custom css styles there. If you have already created a custom style.css file,
+Plese uncomment below line */
+
+/* @import "./style.css"; */
+
+@import "tailwindcss/utilities";
