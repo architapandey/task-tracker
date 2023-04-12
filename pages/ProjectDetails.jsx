@@ -6,10 +6,9 @@ import {
   RhRichTextEditor,
   RhSelect,
 } from "@rhythm-ui/react";
+import AddProjectModal from "./AddProjectModal";
 
 export default function ProjectDetails({ onClose, getData }) {
-  // const [startTime, setStartTime] = useState("");
-  // const [endTime, setEndTime] = useState("");
   const defaultUserState = {
     projectName: "",
     projectDetails: "",
@@ -19,9 +18,14 @@ export default function ProjectDetails({ onClose, getData }) {
     date: "",
   };
   const [userData, setUserData] = useState(defaultUserState);
+  const [projectOptions, setProjectOptions] = useState([
+    { label: "Blues", value: "blues" },
+    { label: "Rock", value: "rock" },
+    { label: "Jazz", value: "jazz" },
+  ]);
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
   const handleCancel = () => {
-    // Close the dialog
     onClose(false);
   };
 
@@ -33,7 +37,13 @@ export default function ProjectDetails({ onClose, getData }) {
     }));
   };
 
-  // connect with firebase
+  const addProjectOption = (newOption) => {
+    setProjectOptions((prevState) => [...prevState, newOption]);
+    setUserData((prevState) => ({
+      ...prevState,
+      clients: [...prevState.clients, newOption],
+    }));
+  };
 
   const submitData = async (event) => {
     event.preventDefault();
@@ -46,7 +56,6 @@ export default function ProjectDetails({ onClose, getData }) {
         headers: {
           "Content-Type": "application/json",
         },
-
         body: JSON.stringify({
           projectName,
           clients: clientData,
@@ -57,15 +66,12 @@ export default function ProjectDetails({ onClose, getData }) {
       }
     );
     if (res) {
-      // alert("Data stored");
       getData();
       setUserData(defaultUserState);
-      // onClose(false);
       handleCancel();
     } else {
-      // alert("data not stored");
+      console.log("data not stored");
     }
-    console.log(res);
   };
 
   return (
@@ -88,8 +94,8 @@ export default function ProjectDetails({ onClose, getData }) {
           }
         />
       </div>
-      <div className="w-full flex justify-left pt-8">
-        <div className="h-full w-full p-4">
+      <div className="w-full flex-1  pt-8">
+        <div className="h-full w-full p-4 ">
           <RhSelect
             isMulti
             onChange={(selectedOptions) =>
@@ -98,17 +104,36 @@ export default function ProjectDetails({ onClose, getData }) {
                 clients: selectedOptions,
               }))
             }
-            className="text-sm  "
-            options={[
-              { label: "Blues", value: "blues" },
-              { label: "Rock", value: "rock" },
-              { label: "Jazz", value: "jazz" },
-            ]}
+            className="text-sm"
+            options={projectOptions}
             placeholder="Project"
             value={userData.clients}
+            formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
+            onCreateOption={(inputValue) =>
+              addProjectOption({ label: inputValue, value: inputValue })
+            }
           />
         </div>
+        <div className="w-full flex justify-center">
+          <RhButton
+            className=" flex-1 p-2 m-4"
+            onClick={() => setShowAddProjectModal(true)}
+          >
+            Add Project
+          </RhButton>
+        </div>
+        {showAddProjectModal && (
+          <AddProjectModal
+            onClose={() => setShowAddProjectModal(false)}
+            onAddProjectOption={(newOption) => {
+              setShowAddProjectModal(false);
+              addProjectOption(newOption);
+              // onAddProjectOption(newOption); //  onAddProjectOption
+            }}
+          />
+        )}
       </div>
+
       <div className="flex flex-wrap justify-left items-center pt-4">
         <RhInput
           input="text"

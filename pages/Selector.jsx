@@ -11,7 +11,7 @@ export default function Selector({ getData }) {
 
   return (
     <>
-      <div className="flex justify-end p-4 m-4 ">
+      <div className="flex justify-end p-4 m-4 h-full ">
         <RhButton size="sm" className="w-20 h-10" onClick={handleAddClick}>
           Add
         </RhButton>
