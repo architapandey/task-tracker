@@ -1,4 +1,4 @@
-import { RhDivider, RhDatePicker } from "@rhythm-ui/react";
+import { RhDivider, RhDatePicker, RhButton } from "@rhythm-ui/react";
 import Selector from "./Selector";
 import Calendar from "react-calendar";
 import { useState, useEffect, useContext } from "react";
@@ -44,6 +44,7 @@ export default function Home() {
     <div className="h-full w-full">
       <div>
         <Selector getData={getData} />
+
         <RhDivider />
       </div>
       {/* Content for the left half */}

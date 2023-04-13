@@ -11,9 +11,12 @@ import React from "react";
 import { useState } from "react";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import { auth } from "./firebase";
+import { useRouter } from "next/router";
 
 const Login = () => {
   // var auth = getAuth(firebase);
+
+  const router = useRouter();
 
   const LOGO_URL =
     "https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg";
@@ -38,6 +41,9 @@ const Login = () => {
         const errorMessage = error.message;
         console.error("Error signing up:", errorCode, errorMessage);
       });
+    router.push({
+      pathname: "/Home",
+    });
   };
   return (
     <div className="h-[80vh] flex flex-nowrap flex-1 ">
