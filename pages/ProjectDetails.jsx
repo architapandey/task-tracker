@@ -7,35 +7,76 @@ import {
   RhSelect,
 } from "@rhythm-ui/react";
 import AddProjectModal from "./AddProjectModal";
+import { useEffect } from "react";
+import { database } from "./firebase";
+import { ref, update } from "firebase/database";
+import { useRouter } from "next/router";
 
-export default function ProjectDetails({ onClose, getData }) {
-  const defaultUserState = {
-    projectName: "",
-    projectDetails: "",
-    clients: "",
-    startTime: "",
-    endTime: "",
-    date: "",
-  };
+const defaultUserState = {
+  projectName: "",
+  projectDetails: "",
+  clients: "",
+  startTime: "",
+  endTime: "",
+  date: "",
+};
+
+export default function ProjectDetails({
+  onClose,
+  getData,
+  projectData,
+  isEditFlow,
+}) {
+  const router = useRouter();
+
   const [userData, setUserData] = useState(defaultUserState);
   const [projectOptions, setProjectOptions] = useState([
-    { label: "Blues", value: "blues" },
-    { label: "Rock", value: "rock" },
-    { label: "Jazz", value: "jazz" },
+    { label: "Blues", value: "Blues" },
+    { label: "Rock", value: "Rock" },
+    { label: "Jazz", value: "Jazz" },
   ]);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
+  useEffect(() => {
+    if (isEditFlow)
+      setUserData({
+        projectName: projectData.projectName,
+        projectDetails: projectData.projectDetails,
+        clients: projectData.clients,
+        startTime: projectData.startTime,
+        endTime: projectData.endTime,
+        date: projectData.date,
+      });
+  }, [projectData]);
 
   const handleCancel = () => {
     onClose(false);
   };
 
-  const postUserData = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
+    const { startTime, endTime } = userData;
+
+    if (name === "endTime" && endTime && startTime) {
+      const startTimeInMinutes = convertTimeToMinutes(startTime);
+      const endTimeInMinutes = convertTimeToMinutes(value);
+
+      if (endTimeInMinutes <= startTimeInMinutes) {
+        alert("End time cannot be before start time.");
+        return;
+      }
+    }
+
     setUserData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
   };
+
+  function convertTimeToMinutes(time) {
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
 
   const addProjectOption = (newOption) => {
     setProjectOptions((prevState) => [...prevState, newOption]);
@@ -45,12 +86,27 @@ export default function ProjectDetails({ onClose, getData }) {
     }));
   };
 
+  function updateData() {
+    update(ref(database, `UserData/${projectData.id}`), {
+      ...userData,
+      clients: userData?.clients?.map((client) => client?.label),
+    });
+  }
+
   const submitData = async (event) => {
     event.preventDefault();
-    const { projectName, clients, startTime, endTime, date } = userData;
+    const { projectName, clients, startTime, endTime, date, projectDetails } =
+      userData;
     const clientData = clients?.map((client) => client?.label);
+    if (isEditFlow) {
+      updateData();
+      router.push({
+        pathname: "/",
+      });
+      return;
+    }
     const res = await fetch(
-      "https://timetracker-be09e-default-rtdb.firebaseio.com/UserData.json",
+      `https://timetracker-be09e-default-rtdb.firebaseio.com/UserData.json`,
       {
         method: "POST",
         headers: {
@@ -58,6 +114,7 @@ export default function ProjectDetails({ onClose, getData }) {
         },
         body: JSON.stringify({
           projectName,
+          projectDetails,
           clients: clientData,
           startTime,
           endTime,
@@ -69,8 +126,6 @@ export default function ProjectDetails({ onClose, getData }) {
       getData();
       setUserData(defaultUserState);
       handleCancel();
-    } else {
-      console.log("data not stored");
     }
   };
 
@@ -80,13 +135,13 @@ export default function ProjectDetails({ onClose, getData }) {
         input="text"
         name="projectName"
         placeholder="Task Name"
-        className="m-4 p-4 w-full mt-12"
-        value={userData.projectName}
-        onChange={postUserData}
+        className="m-4 p-4 w-full mt-8"
+        value={userData?.projectName}
+        onChange={handleChange}
       />
       <div className="p-4  min-h-64">
         <RhRichTextEditor
-          onChange={(value) =>
+          onEditorChange={(value) =>
             setUserData((prevState) => ({
               ...prevState,
               projectDetails: value,
@@ -94,7 +149,7 @@ export default function ProjectDetails({ onClose, getData }) {
           }
         />
       </div>
-      <div className="w-full flex-1  pt-8">
+      <div className="w-full flex-1  pt-2">
         <div className="h-full w-full p-4 ">
           <RhSelect
             isMulti
@@ -107,7 +162,7 @@ export default function ProjectDetails({ onClose, getData }) {
             className="text-sm"
             options={projectOptions}
             placeholder="Project"
-            value={userData.clients}
+            value={userData?.clients}
             formatCreateLabel={(inputValue) => `Add "${inputValue}"`}
             onCreateOption={(inputValue) =>
               addProjectOption({ label: inputValue, value: inputValue })
@@ -128,21 +183,20 @@ export default function ProjectDetails({ onClose, getData }) {
             onAddProjectOption={(newOption) => {
               setShowAddProjectModal(false);
               addProjectOption(newOption);
-              // onAddProjectOption(newOption); //  onAddProjectOption
             }}
           />
         )}
       </div>
 
-      <div className="flex flex-wrap justify-left items-center pt-4">
+      <div className="flex flex-wrap justify-left items-center pt-2">
         <RhInput
           input="text"
           name="date"
           type="date"
           placeholder="Date"
           className="m-4 p-4 w-1/4"
-          value={userData.date}
-          onChange={postUserData}
+          value={userData?.date}
+          onChange={handleChange}
         />
         <RhInput
           input="text"
@@ -150,8 +204,8 @@ export default function ProjectDetails({ onClose, getData }) {
           type="time"
           placeholder="Start Time"
           className="m-4 p-4 w-1/4"
-          value={userData.startTime}
-          onChange={postUserData}
+          value={userData?.startTime}
+          onChange={handleChange}
         />
         <RhInput
           input="text"
@@ -159,8 +213,8 @@ export default function ProjectDetails({ onClose, getData }) {
           type="time"
           placeholder="End Time"
           className="m-4 p-4 w-1/4"
-          value={userData.endTime}
-          onChange={postUserData}
+          value={userData?.endTime}
+          onChange={handleChange}
         />
         <div className="p-5 flex justify-end">
           <RhButtonGroup className=" text-white">
@@ -182,7 +236,6 @@ export default function ProjectDetails({ onClose, getData }) {
             </RhButton>
           </RhButtonGroup>
         </div>
-        {/* Display the details */}
       </div>
     </div>
   );
