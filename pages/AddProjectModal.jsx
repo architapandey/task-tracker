@@ -8,8 +8,21 @@ export default function AddProjectModal({ onClose, onAddProjectOption }) {
     onClose();
   };
 
-  const handleAddProject = () => {
+  const handleAddProject = async () => {
     if (newProjectName.trim() !== "") {
+      const res = await fetch(
+        `https://timetracker-be09e-default-rtdb.firebaseio.com/Options.json`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            label: newProjectName,
+            value: newProjectName,
+          }),
+        }
+      );
       const newOption = { label: newProjectName, value: newProjectName };
       onAddProjectOption(newOption);
       onClose();

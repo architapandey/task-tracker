@@ -3,7 +3,7 @@ import { RhDrawer, RhButton } from "@rhythm-ui/react";
 import ProjectDetails from "./ProjectDetails";
 import { useRouter } from "next/router";
 
-export default function Selector({ getData }) {
+export default function Selector() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
@@ -11,7 +11,7 @@ export default function Selector({ getData }) {
     setIsOpen(true);
   };
   const handleSignOutClick = () => {
-    router.push("/Login");
+    router.push("/login");
   };
 
   return (
@@ -34,7 +34,7 @@ export default function Selector({ getData }) {
         backdrop={true}
         variant="temporary"
       >
-        <ProjectDetails onClose={() => setIsOpen(false)} getData={getData} />
+        <ProjectDetails onClose={() => setIsOpen(false)} isOpen={isOpen} />
       </RhDrawer>
     </>
   );

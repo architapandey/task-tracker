@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   RhButton,
   RhButtonGroup,
@@ -8,9 +8,11 @@ import {
 } from "@rhythm-ui/react";
 import AddProjectModal from "./AddProjectModal";
 import { useEffect } from "react";
-import { database } from "./firebase";
+import { database } from "../Configs/firebase";
 import { ref, update } from "firebase/database";
 import { useRouter } from "next/router";
+import { getData } from "./utils";
+import { AppContext } from "'@/store/context'";
 
 const defaultUserState = {
   projectName: "",
@@ -23,18 +25,16 @@ const defaultUserState = {
 
 export default function ProjectDetails({
   onClose,
-  getData,
   projectData,
   isEditFlow,
+  isOpen,
 }) {
   const router = useRouter();
 
+  const { dispatch } = useContext(AppContext);
+
   const [userData, setUserData] = useState(defaultUserState);
-  const [projectOptions, setProjectOptions] = useState([
-    { label: "Blues", value: "Blues" },
-    { label: "Rock", value: "Rock" },
-    { label: "Jazz", value: "Jazz" },
-  ]);
+  const [projectOptions, setProjectOptions] = useState([]);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
   useEffect(() => {
@@ -91,6 +91,7 @@ export default function ProjectDetails({
       ...userData,
       clients: userData?.clients?.map((client) => client?.label),
     });
+    getData(dispatch);
   }
 
   const submitData = async (event) => {
@@ -100,9 +101,7 @@ export default function ProjectDetails({
     const clientData = clients?.map((client) => client?.label);
     if (isEditFlow) {
       updateData();
-      router.push({
-        pathname: "/",
-      });
+      handleCancel();
       return;
     }
     const res = await fetch(
@@ -123,11 +122,28 @@ export default function ProjectDetails({
       }
     );
     if (res) {
-      getData();
+      getData(dispatch);
       setUserData(defaultUserState);
       handleCancel();
     }
   };
+
+  useEffect(() => {
+    const getOptions = async () => {
+      const res = await fetch(
+        "https://timetracker-be09e-default-rtdb.firebaseio.com/Options.json"
+      );
+      const data = await res.json();
+      if (data) {
+        const formattedData = Object.keys(data).map((key) => ({
+          ...data[key],
+        }));
+
+        setProjectOptions(formattedData);
+      }
+    };
+    if (isOpen) getOptions();
+  }, [isOpen]);
 
   return (
     <div className="">
@@ -141,6 +157,7 @@ export default function ProjectDetails({
       />
       <div className="p-4  min-h-64">
         <RhRichTextEditor
+          initialValue={isEditFlow ? projectData?.projectDetails : ""}
           onEditorChange={(value) =>
             setUserData((prevState) => ({
               ...prevState,

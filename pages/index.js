@@ -1,49 +1,40 @@
-import { RhDivider, RhDatePicker, RhButton } from "@rhythm-ui/react";
+import { RhDivider } from "@rhythm-ui/react";
 import Selector from "./Selector";
 import Calendar from "react-calendar";
 import { useState, useEffect, useContext } from "react";
 import "react-calendar/dist/Calendar.css";
 import { format } from "date-fns";
-// import Content from "./content";
 import { AppContext } from "'@/store/context'";
 import ProjectTable from "./ProjectTable";
+import { useRouter } from "next/router";
+import { getData } from "./utils";
 
 export default function Home() {
+  const router = useRouter();
+
   const [date, setDate] = useState(new Date());
-  const { dispatch, state } = useContext(AppContext);
+  const { dispatch } = useContext(AppContext);
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      router.push("/login");
+    }
+  }, []);
 
   const onChange = (date) => {
-    // console.log("date  ", date);
     setDate(date);
   };
 
   const formattedDate = format(date, " d MMMM, yyyy");
 
-  const getData = async () => {
-    const res = await fetch(
-      "https://timetracker-be09e-default-rtdb.firebaseio.com/UserData.json"
-    );
-    const data = await res.json();
-    if (data) {
-      const formattedData = Object.keys(data).map((key) => ({
-        id: key,
-        ...data[key],
-      }));
-      dispatch({
-        type: "SET_PROJECT_DETAILS",
-        data: formattedData,
-      });
-    }
-  };
-
   useEffect(() => {
-    getData();
+    getData(dispatch);
   }, []);
 
   return (
     <div className="h-full w-full">
       <div>
-        <Selector getData={getData} />
+        <Selector />
 
         <RhDivider />
       </div>

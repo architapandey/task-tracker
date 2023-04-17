@@ -2,12 +2,16 @@ import { useReducer, createContext } from "react";
 
 const initialState = {
   projectDetails: [],
+  userDetails: null,
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "SET_PROJECT_DETAILS":
       return { ...state, projectDetails: action.data };
+
+    case "SET_USER_DETAILS":
+      return { ...state, userDetails: action.data };
 
     default:
       return { ...state };
