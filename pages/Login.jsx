@@ -1,10 +1,4 @@
-import {
-  RhImage,
-  RhButton,
-  RhDivider,
-  RhLabel,
-  RhInput,
-} from "@rhythm-ui/react";
+import { RhImage, RhButton, RhLabel, RhInput } from "@rhythm-ui/react";
 import React, { useContext } from "react";
 import { useState } from "react";
 import {
@@ -12,9 +6,9 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../Configs/firebase";
 import { useRouter } from "next/router";
 import { AppContext } from "'@/store/context'";
+import { auth } from "'@/Configs/firebase'";
 
 const login = () => {
   const { dispatch } = useContext(AppContext);

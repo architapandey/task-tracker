@@ -9,8 +9,8 @@ import {
 import AddProjectModal from "./AddProjectModal";
 import { useEffect } from "react";
 import { database } from "../Configs/firebase";
-import { ref, update } from "firebase/database";
-import { useRouter } from "next/router";
+import { push, ref, update } from "firebase/database";
+// import { useRouter } from "next/router";
 import { getData } from "./utils";
 import { AppContext } from "'@/store/context'";
 
@@ -29,12 +29,13 @@ export default function ProjectDetails({
   isEditFlow,
   isOpen,
 }) {
-  const router = useRouter();
+  const userId = localStorage.getItem("token");
 
   const { dispatch } = useContext(AppContext);
 
   const [userData, setUserData] = useState(defaultUserState);
   const [projectOptions, setProjectOptions] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(isEditFlow ? false : true);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
   useEffect(() => {
@@ -87,11 +88,20 @@ export default function ProjectDetails({
   };
 
   function updateData() {
-    update(ref(database, `UserData/${projectData.id}`), {
+    update(ref(database, `UserData/${userId}/${projectData.id}`), {
       ...userData,
       clients: userData?.clients?.map((client) => client?.label),
     });
     getData(dispatch);
+  }
+
+  function setData(data) {
+    const msgRef = push(ref(database, `UserData/${userId}`), data);
+    msgRef.then((snapshot) => {
+      getData(dispatch);
+      setUserData(defaultUserState);
+      handleCancel();
+    });
   }
 
   const submitData = async (event) => {
@@ -104,28 +114,15 @@ export default function ProjectDetails({
       handleCancel();
       return;
     }
-    const res = await fetch(
-      `https://timetracker-be09e-default-rtdb.firebaseio.com/UserData.json`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          projectName,
-          projectDetails,
-          clients: clientData,
-          startTime,
-          endTime,
-          date,
-        }),
-      }
-    );
-    if (res) {
-      getData(dispatch);
-      setUserData(defaultUserState);
-      handleCancel();
-    }
+
+    setData({
+      projectName,
+      projectDetails,
+      clients: clientData,
+      startTime,
+      endTime,
+      date,
+    });
   };
 
   useEffect(() => {
@@ -147,7 +144,16 @@ export default function ProjectDetails({
 
   return (
     <div className="">
+      {isEditFlow && (
+        <RhButton
+          className=" hover:text-gray-700 cursor-pointer m-2"
+          onClick={() => setIsEditMode(!isEditMode)}
+        >
+          Edit{" "}
+        </RhButton>
+      )}
       <RhInput
+        disabled={!isEditMode}
         input="text"
         name="projectName"
         placeholder="Task Name"
@@ -170,6 +176,7 @@ export default function ProjectDetails({
         <div className="h-full w-full p-4 ">
           <RhSelect
             isMulti
+            isDisabled={!isEditMode}
             onChange={(selectedOptions) =>
               setUserData((prevState) => ({
                 ...prevState,
@@ -188,6 +195,7 @@ export default function ProjectDetails({
         </div>
         <div className="w-full flex justify-center">
           <RhButton
+            disabled={!isEditMode}
             className=" flex-1 p-2 m-4"
             onClick={() => setShowAddProjectModal(true)}
           >
@@ -213,6 +221,7 @@ export default function ProjectDetails({
           placeholder="Date"
           className="m-4 p-4 w-1/4"
           value={userData?.date}
+          disabled={!isEditMode}
           onChange={handleChange}
         />
         <RhInput
@@ -223,6 +232,7 @@ export default function ProjectDetails({
           className="m-4 p-4 w-1/4"
           value={userData?.startTime}
           onChange={handleChange}
+          disabled={!isEditMode}
         />
         <RhInput
           input="text"
@@ -232,6 +242,7 @@ export default function ProjectDetails({
           className="m-4 p-4 w-1/4"
           value={userData?.endTime}
           onChange={handleChange}
+          disabled={!isEditMode}
         />
         <div className="p-5 flex justify-end">
           <RhButtonGroup className=" text-white">
@@ -240,6 +251,7 @@ export default function ProjectDetails({
               size="xl"
               className="bg-black "
               onClick={submitData}
+              disabled={!isEditMode}
             >
               Log
             </RhButton>

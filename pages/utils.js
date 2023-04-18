@@ -1,6 +1,8 @@
 export const getData = async (dispatch) => {
+  const userId = localStorage.getItem("token");
+
   const res = await fetch(
-    "https://timetracker-be09e-default-rtdb.firebaseio.com/UserData.json"
+    `https://timetracker-be09e-default-rtdb.firebaseio.com/UserData/${userId}.json`
   );
   const data = await res.json();
   if (data) {
