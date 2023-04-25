@@ -16,3 +16,7 @@ export const getData = async (dispatch) => {
     });
   }
 };
+
+export function removeHtmlTags(str) {
+  return str.replace(/(<([^>]+)>)/gi, "");
+}

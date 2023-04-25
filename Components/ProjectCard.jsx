@@ -24,7 +24,7 @@ const ProjectCard = (props) => {
   return (
     <>
       <div
-        className="flex border border-grey-400 mb-2 px-2 rounded-lg"
+        className="flex border border-grey-400 mb-2 px-2 rounded-lg text-white"
         onClick={() => setIsOpen(true)}
       >
         <p className="flex-1">{projectName}</p>

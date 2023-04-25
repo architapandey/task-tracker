@@ -11,6 +11,7 @@ export default function Selector() {
     setIsOpen(true);
   };
   const handleSignOutClick = () => {
+    localStorage.removeItem("token");
     router.push("/login");
   };
 

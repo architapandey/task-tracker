@@ -9,11 +9,15 @@ import {
 import { useRouter } from "next/router";
 import { AppContext } from "'@/store/context'";
 import { auth } from "'@/Configs/firebase'";
+import home from "../assets/login.svg";
+import Image from "next/image";
 
 const login = () => {
   const { dispatch } = useContext(AppContext);
 
   const router = useRouter();
+  // const COVER_URL =
+  //   "https://images.unsplash.com/photo-1557683304-673a23048d34?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=282&q=80";
 
   const LOGO_URL =
     "https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg";
@@ -53,7 +57,7 @@ const login = () => {
   };
   return (
     <div className="h-[80vh] flex flex-nowrap flex-1 ">
-      <div className="px-4 flex-[100%] xl:flex-[40%] ">
+      <div className="px-4 flex-[100%] xl:flex-[50%] ">
         <div className="w-full h-full mx-auto justify-center items-center flex flex-wrap ">
           <div className="mt-8">
             <RhImage
@@ -64,12 +68,16 @@ const login = () => {
               width="65px"
               className="dark:bg-inherit"
             />
-            <h2 className="text-3xl font-semibold mt-6">
-              Sign in to your account
+            <h2 className="text-3xl font-semibold mt-6 text-white">
+              Sign-in to your account
             </h2>
             <div className="mt-1 flex flex-wrap flex-col gap-2">
-              <div className="space-y-2">
-                <RhLabel label="Input Label" labelFor="label-for-input">
+              <div className="space-y-2 ">
+                <RhLabel
+                  label="Input Label"
+                  labelFor="label-for-input"
+                  className="text-white"
+                >
                   Email address
                 </RhLabel>
                 <RhInput
@@ -84,7 +92,11 @@ const login = () => {
               </div>
 
               <div className="space-y-2">
-                <RhLabel label="Input Label" labelFor="label-for-input">
+                <RhLabel
+                  label="Input Label"
+                  labelFor="label-for-input"
+                  className="text-white"
+                >
                   Password
                 </RhLabel>{" "}
                 <RhInput
@@ -124,6 +136,13 @@ const login = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div className="flex items-end justify-center xl:flex-[50%]  bg-white h-screen">
+        <Image
+          className="transform translate-y-8"
+          src={home}
+          // alt="bg"
+        />
       </div>
     </div>
   );

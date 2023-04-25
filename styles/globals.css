@@ -11,3 +11,7 @@ Plese uncomment below line */
 /* @import "./style.css"; */
 
 @import "tailwindcss/utilities";
+
+body {
+    background-color: #2F2D2D;
+}

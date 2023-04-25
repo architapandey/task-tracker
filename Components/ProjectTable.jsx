@@ -13,14 +13,12 @@ const ProjectTable = ({ date }) => {
   );
 
   if (!filteredProjectDetails || filteredProjectDetails.length === 0) {
-    return (
-      <h2 className=" text-secondary-700 text-center">No tasks for today!</h2>
-    );
+    return <h2 className="text-white text-center">No tasks for today!</h2>;
   }
 
   return (
     <>
-      <div className="flex px-2 font-bold mt-3">
+      <div className="flex px-2 font-bold mt-3 text-white">
         <p className="flex-1">Task Name</p>
         <p className="flex-1">Projects</p>
         <p className="flex-1">Start Time</p>
