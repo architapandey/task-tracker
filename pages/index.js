@@ -27,21 +27,21 @@ export default function Home() {
     setDate(date);
   };
 
-  const formattedDate = format(date, " d MMMM, yyyy");
+  const formattedDate = format(date, "yyyy, d MMMM");
 
   useEffect(() => {
     getData(dispatch);
   }, []);
 
   return (
-    <div className="h-full w-full">
+    <div className=" overflow-hidden">
       <div>
         <Selector />
 
         <RhDivider width="lg" />
       </div>
       {/* Content for the left half */}
-      <div className="h-screen flex">
+      <div className="flex ">
         <div className="flex-1 flex ">
           <div className=" p-4 m-4 ">
             <Calendar
@@ -51,7 +51,7 @@ export default function Home() {
             />
             <Image
               src={image}
-              className="h-[500px] w-[300px]  transform translate-y-10 translate-x-24"
+              className="h-[410px] w-[300px]  transform translate-y-28 translate-x-24 m-0"
             />
           </div>
           <div>

@@ -41,7 +41,6 @@ const login = () => {
             type: "SET_USER_DETAILS",
             data: user,
           });
-          console.log({ user });
           localStorage.setItem("token", user.uid);
           router.push({
             pathname: "/",
@@ -137,7 +136,7 @@ const login = () => {
           </div>
         </div>
       </div>
-      <div className="flex items-end justify-center xl:flex-[50%]  bg-white h-screen">
+      <div className="flex items-end justify-center xl:flex-[50%]  bg-[#6366F1] h-screen">
         <Image
           className="transform translate-y-8"
           src={home}

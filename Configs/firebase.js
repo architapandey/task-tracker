@@ -3,13 +3,13 @@ import { getDatabase } from "firebase/database";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAXUlwJijuGVK2cjg-pR2kbxDPNp_kssbQ",
-  authDomain: "timetracker-be09e.firebaseapp.com",
-  databaseURL: "https://timetracker-be09e-default-rtdb.firebaseio.com",
-  projectId: "timetracker-be09e",
-  storageBucket: "timetracker-be09e.appspot.com",
-  messagingSenderId: "672657720125",
-  appId: "1:672657720125:web:8921705bc92ee309153b54",
+  databaseURL: "https://timetracker-beb60-default-rtdb.firebaseio.com",
+  apiKey: "AIzaSyC5uZWGUQB9kgzcwbOP1GbUJ-6c5wvNaxs",
+  authDomain: "timetracker-beb60.firebaseapp.com",
+  projectId: "timetracker-beb60",
+  storageBucket: "timetracker-beb60.appspot.com",
+  messagingSenderId: "149138924372",
+  appId: "1:149138924372:web:b190647a9b7ab4fcae9ec1",
 };
 
 const app = initializeApp(firebaseConfig);

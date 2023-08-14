@@ -17,7 +17,7 @@ export default function Selector() {
 
   return (
     <>
-      <div className="flex justify-end p-4 m-4 h-full gap-5  ">
+      <div className="flex justify-end p-4 m-4 gap-5  ">
         <RhButton size="sm" className="w-20 h-10" onClick={handleAddClick}>
           Add
         </RhButton>
@@ -35,7 +35,11 @@ export default function Selector() {
         backdrop={true}
         variant="temporary"
       >
-        <ProjectDetails onClose={() => setIsOpen(false)} isOpen={isOpen} />
+        <ProjectDetails
+          onClose={() => setIsOpen(false)}
+          isOpen={isOpen}
+          isEditFlow={false}
+        />
       </RhDrawer>
     </>
   );

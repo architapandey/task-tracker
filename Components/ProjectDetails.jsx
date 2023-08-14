@@ -14,7 +14,6 @@ import { push, ref, update } from "firebase/database";
 import { getData, removeHtmlTags } from "../store/utils";
 import { AppContext } from "'@/store/context'";
 import DrawerContent from "'@/Components/drawerContent'";
-import { RhIcon } from "@rhythm-ui/react";
 
 const defaultUserState = {
   projectName: "",
@@ -37,7 +36,7 @@ export default function ProjectDetails({
 
   const [userData, setUserData] = useState(defaultUserState);
   const [projectOptions, setProjectOptions] = useState([]);
-  const [isEditMode, setIsEditMode] = useState(isEditFlow ? false : true);
+  const [isEditMode, setIsEditMode] = useState(!isEditFlow);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
 
   useEffect(() => {
@@ -54,7 +53,7 @@ export default function ProjectDetails({
 
   const handleCancel = () => {
     onClose(false);
-    setIsEditMode(!isEditMode);
+    isEditFlow && setIsEditMode(!isEditMode);
   };
 
   const handleChange = (e) => {
@@ -132,7 +131,7 @@ export default function ProjectDetails({
   useEffect(() => {
     const getOptions = async () => {
       const res = await fetch(
-        "https://timetracker-be09e-default-rtdb.firebaseio.com/Options.json"
+        "https://timetracker-beb60-default-rtdb.firebaseio.com/Options.json"
       );
       const data = await res.json();
       if (data) {
@@ -145,18 +144,14 @@ export default function ProjectDetails({
     };
     if (isOpen) getOptions();
   }, [isOpen]);
-  // console.log(isEditFlow);
+  console.log("first", isEditFlow, isEditMode);
+
   return (
     <div className="">
-      {isEditMode === false ? (
-        <>
-          {/* <div className="flex justify-end p-4 m-4 ">
-         
-          </div> */}
-          <div>
-            <DrawerContent userData={userData} setIsEditMode={setIsEditMode} />
-          </div>
-        </>
+      {!isEditMode ? (
+        <div>
+          <DrawerContent userData={userData} setIsEditMode={setIsEditMode} />
+        </div>
       ) : (
         <>
           {" "}
@@ -171,17 +166,17 @@ export default function ProjectDetails({
           />
           <div className="p-4  min-h-64">
             <RhRichTextEditor
-              initialValue={isEditFlow ? projectData?.projectDetails : ""}
+              initialValue={isEditMode ? projectData?.projectDetails : ""}
               onEditorChange={(value) =>
                 setUserData((prevState) => ({
                   ...prevState,
-                  projectDetails: removeHtmlTags(value),
+                  projectDetails: value,
                 }))
               }
             />
           </div>
           <div className="w-full flex-1  pt-2">
-            <div className="h-full w-full p-4 ">
+            <div className=" w-full p-4 ">
               <RhSelect
                 isMulti
                 isDisabled={!isEditMode}
